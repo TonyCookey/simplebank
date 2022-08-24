@@ -7,39 +7,31 @@ package db
 
 import (
 	"context"
-	"database/sql"
 )
 
 const createAccount = `-- name: CreateAccount :one
 INSERT INTO accounts (
-  account_name, balance, currency, phone
+  account_name, balance, currency
 ) VALUES (
-  $1, $2, $3, $4
+  $1, $2, $3
 )
-RETURNING id, account_name, balance, currency, phone, created_at
+RETURNING id, account_name, balance, currency, created_at
 `
 
 type CreateAccountParams struct {
-	AccountName string         `json:"account_name"`
-	Balance     int64          `json:"balance"`
-	Currency    string         `json:"currency"`
-	Phone       sql.NullString `json:"phone"`
+	AccountName string `json:"account_name"`
+	Balance     int64  `json:"balance"`
+	Currency    string `json:"currency"`
 }
 
 func (q *Queries) CreateAccount(ctx context.Context, arg CreateAccountParams) (Account, error) {
-	row := q.db.QueryRowContext(ctx, createAccount,
-		arg.AccountName,
-		arg.Balance,
-		arg.Currency,
-		arg.Phone,
-	)
+	row := q.db.QueryRowContext(ctx, createAccount, arg.AccountName, arg.Balance, arg.Currency)
 	var i Account
 	err := row.Scan(
 		&i.ID,
 		&i.AccountName,
 		&i.Balance,
 		&i.Currency,
-		&i.Phone,
 		&i.CreatedAt,
 	)
 	return i, err
@@ -56,7 +48,7 @@ func (q *Queries) DeleteAccount(ctx context.Context, id int32) error {
 }
 
 const getAccount = `-- name: GetAccount :one
-SELECT id, account_name, balance, currency, phone, created_at FROM accounts
+SELECT id, account_name, balance, currency, created_at FROM accounts
 WHERE id = $1 LIMIT 1
 `
 
@@ -68,14 +60,13 @@ func (q *Queries) GetAccount(ctx context.Context, id int32) (Account, error) {
 		&i.AccountName,
 		&i.Balance,
 		&i.Currency,
-		&i.Phone,
 		&i.CreatedAt,
 	)
 	return i, err
 }
 
 const listAccounts = `-- name: ListAccounts :many
-SELECT id, account_name, balance, currency, phone, created_at FROM accounts
+SELECT id, account_name, balance, currency, created_at FROM accounts
 ORDER BY id
 LIMIT $1
 OFFSET $2
@@ -100,7 +91,6 @@ func (q *Queries) ListAccounts(ctx context.Context, arg ListAccountsParams) ([]A
 			&i.AccountName,
 			&i.Balance,
 			&i.Currency,
-			&i.Phone,
 			&i.CreatedAt,
 		); err != nil {
 			return nil, err
@@ -120,7 +110,7 @@ const updateAccount = `-- name: UpdateAccount :one
 UPDATE accounts
 SET balance = $2
 WHERE id = $1
-RETURNING id, account_name, balance, currency, phone, created_at
+RETURNING id, account_name, balance, currency, created_at
 `
 
 type UpdateAccountParams struct {
@@ -136,7 +126,6 @@ func (q *Queries) UpdateAccount(ctx context.Context, arg UpdateAccountParams) (A
 		&i.AccountName,
 		&i.Balance,
 		&i.Currency,
-		&i.Phone,
 		&i.CreatedAt,
 	)
 	return i, err

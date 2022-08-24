@@ -10,12 +10,11 @@ import (
 )
 
 type Account struct {
-	ID          int32          `json:"id"`
-	AccountName string         `json:"account_name"`
-	Balance     int64          `json:"balance"`
-	Currency    string         `json:"currency"`
-	Phone       sql.NullString `json:"phone"`
-	CreatedAt   time.Time      `json:"created_at"`
+	ID          int32     `json:"id"`
+	AccountName string    `json:"account_name"`
+	Balance     int64     `json:"balance"`
+	Currency    string    `json:"currency"`
+	CreatedAt   time.Time `json:"created_at"`
 }
 
 type Entry struct {
