@@ -3,7 +3,6 @@ package db
 import (
 	"context"
 	"database/sql"
-	"fmt"
 	"testing"
 	"time"
 
@@ -26,9 +25,9 @@ func CreateRandomTransfer(t *testing.T) Transfer {
 	require.NoError(t, err)
 	require.NotEmpty(t, transfer)
 
-	require.Equal(t, transfer.FromAccountID, arg.FromAccountID)
-	require.Equal(t, transfer.ToAccountID, arg.ToAccountID)
-	require.Equal(t, transfer.Amount, arg.Amount)
+	require.Equal(t, arg.FromAccountID, transfer.FromAccountID)
+	require.Equal(t, arg.ToAccountID, transfer.ToAccountID)
+	require.Equal(t, arg.Amount, transfer.Amount)
 
 	require.NotZero(t, transfer.ID)
 	require.NotZero(t, transfer.CreatedAt)
@@ -49,9 +48,9 @@ func CreateAccountTransfer(t *testing.T, account1, account2 Account) Transfer {
 	require.NoError(t, err)
 	require.NotEmpty(t, transfer)
 
-	require.Equal(t, transfer.FromAccountID, arg.FromAccountID)
-	require.Equal(t, transfer.ToAccountID, arg.ToAccountID)
-	require.Equal(t, transfer.Amount, arg.Amount)
+	require.Equal(t, arg.FromAccountID, transfer.FromAccountID)
+	require.Equal(t, arg.ToAccountID, transfer.ToAccountID)
+	require.Equal(t, arg.Amount, transfer.Amount)
 
 	require.NotZero(t, transfer.ID)
 	require.NotZero(t, transfer.CreatedAt)
@@ -122,7 +121,6 @@ func TestListTransfers(t *testing.T) {
 func TestListAccountTransfers(t *testing.T) {
 	account1 := CreateRandomAccount(t)
 	account2 := CreateRandomAccount(t)
-	fmt.Println(account1.Balance)
 
 	for i := 0; i < 10; i++ {
 		CreateAccountTransfer(t, account1, account2)
